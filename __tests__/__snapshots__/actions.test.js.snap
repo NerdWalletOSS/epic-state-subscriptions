@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stateSubscriptionReducer with an overrideStateSubscriptionPaths action should override the state subscription entry with the given paths 1`] = `
+Object {
+  "subscriptionKey": Array [
+    "testPath",
+  ],
+}
+`;
+
+exports[`stateSubscriptionReducer with no actions should have expected initial state 1`] = `Object {}`;

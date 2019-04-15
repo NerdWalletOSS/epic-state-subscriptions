@@ -16,7 +16,7 @@ Create an array of state subscription config objects with the `paths` to watch a
 on the observable stream of paths that have changed after an action causes reducers to update the Redux store. 
 
 ```
-import { sideEffectAction } from '
+import { sideEffectAction } from '../Actions';
 const stateSubscriptionConfigs = [
   {
     paths: ['state.x.*.y'],

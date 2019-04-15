@@ -14,84 +14,66 @@ npm install epic-state-subscriptions
 
 ## Basic Usage
 
-Create an array of state subscription config objects with the `paths` to watch and the `pathOperator` RxJS operator to execute
-on the observable stream of paths that have changed after an action causes reducers to update the Redux store. 
+Import the `createStateSubscription` operator and add it to your Epic like any other operator. Pass it the paths that you want to subscribe to in the Redux store and it will transform the action stream into a stream of path changes.
 
 ```
-import { sideEffectAction } from '../Actions';
-const stateSubscriptionConfigs = [
-  {
-    paths: ['state.x.*.y'],
-    pathOperator: (paths$, state$) =>
-      paths$.pipe(
-        tap(paths => {
-          paths.forEach({ pathPattern, path } => {
-            console.log(`path ${path} has been reported to change because of matched pattern ${pathPattern}`);
-          });
-          return sideEffectAction(changeSet);
-        })
-      ),
-  },
-];
+import { createStateSubscription } from 'epic-state-subscriptions';
+
+const exampleEpic = (action$, state$) =>
+  action$.pipe(
+    createStateSubscription(state$, {
+      paths: ['x.y.z', 'a.b.*', '*.c.d'],
+    }),
+    map(paths => {
+      paths.forEach({ pathPattern, path } => {
+        console.log(`path ${path} has been reported to change because of matched pattern ${pathPattern}`);
+      });
+      return sideEffectAction(changeSet);
+    })
+  );
 ```
 
-Then supply the config to the `createStateSubscriptionEpics` epic generator method which creates an array of epics to be included
-in your Redux-Observable `combineEpics` method alongside your other epics.
+Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
 
-```
-import { createStateSubscriptionEpics } from 'epic-state-subscriptions';
-
-const rootEpic = combineEpics(
-  yourEpic,
-  ...createStateSubscriptionEpics(stateSubscriptionConfigs)
-);
-```
-
-Done! Now fire an action that will update your redux state at one of your subscribed paths and watch the path operators perform your side effects!
-
-## Configuration API
+## Configuration Options
 
 State subscription configurations have the following API:
 
 |Option         | Type          | Required | Default      | Description                                                                        |
 |---------------|---------------|----------|--------------|------------------------------------------------------------------------------------|
-| key           | String        | false    | Random uuid  | Optional key name for the config                                                   |
-| paths         | Array<String> | false    | [ ]          | The paths of the form `store.path1.path2` with support for wildcards `store.*.y`   |
-| pathOperator  | Function      | true     | N/A          | The path operator to transform a stream of path changes to actions or side effects. The stream emits an array of the form `[{ path: ..., pathPattern: ... }]` where each of the path objects consists of the path that changed and the pattern it matched. |
+| key           | String        | false    | Random uuid  | Optional key name to identify the subscription                                                   |
+| paths         | Array<String> | false    | [ ]          | The `.` delimited initial paths to watch in the Redux store with support for wildcards `store.*.y`   |
+
 
 ## Using Stream Operators
 
-As observable streams, state subscriptions can leverage standard RxJS operators to create complex state subscriptions. Here is an example of a state subscription that buffers and aggregates changes over a fixed interval:
+As a standard RxJS operator, your Epic can chain `createStateSubscription` to support common use cases like buffering path changes:
 
 ```
-import { bufferTime, filter, map } from 'rxjs/operators';
-import { sideEffectAction } from '../Actions';
+import { createStateSubscription } from 'epic-state-subscriptions';
 
-export default [
-  {
-    key: 'exampleKey',
-    paths: [],
-    pathOperator: (paths$, state$) =>
-      paths$.pipe(
-        // Buffer the handling of path changes
-        bufferTime(1000),
-        // Only proceed if there have been paths that have changed after the buffer interval
-        filter(pathSets => pathSets.length > 0),
-        // Flatten out the sets of path changes and make them distinct
-        map(pathSets =>
-          _.uniqBy(_.flatten(pathSets), ({ path }) => path)
-        ),
-        // Perform a side effect on each of our buffered paths
-        map(paths => sideEffectAction())
-      ),
-  },
-];
+const exampleEpic (action$, state$) =>
+  action$.pipe(
+    // Buffer the actions changes since they are frequent
+    bufferTime(500),
+    // Only emit updates to the state subscription if actions
+    // have occurred in the buffer interval
+    filter(actions => actions.length > 0),
+    createStateSubscription(state$, {
+      paths: ['a.b.c'],
+    }),
+    map(paths => {
+      paths.forEach({ pathPattern, path } => {
+        console.log(`path ${path} has been reported to change because of matched pattern ${pathPattern}`);
+      });
+      return sideEffectAction(changeSet);
+    })
+  );
 ```
 
 ## Dynamic State Subscription Paths
 
-If a config will need dynamic state subscription paths as the application runs, there is a provided state subscription reducer and action for
-overriding the default paths initialized in the config.
+If a config will need dynamic state subscription paths as the application runs, there is a provided state subscription reducer and action for overriding the default paths initialized in the config which you can use.
 
 Include the state subscriptions reducer in your `combineReducers` redux configuration:
 
@@ -110,26 +92,29 @@ import { overrideStateSubscriptionPaths } from 'epic-state-subscriptions';
 dispatch(overrideStateSubscriptionPaths({ stateSubscriptionKey: 'exampleKey', paths: ['state.x.y'] });
 ```
 
-supplying the key specified in your config and the new paths to watch.
+The state subscription key passed in the action should match the key in the `createStateSubscription` config. It automatically will now favour configurations in the reducer at that subscription key over the static initial paths specified in the config.
 
 ## FAQs
 
-1. My state subscription just needs to perform side effects and not fire any actions, how do I set up my `pathOperator`?
+1. My state subscription just needs to perform side effects and not fire any actions, how do I terminate my Epic?
 
 You can use the `tap` operator to perform side effects and use the `ignoreElements` operator to instruct the stream to not emit elements and fire a termination event:
 
 ```
 import { ignoreElements, tap } from 'rxjs/operators';
-import { sideEffect } from '../utils';
+import { createStateSubscription } from 'epic-state-subscriptions';
+import { sideEffectAction } from './actions';
 
-export default [
-  {
-    paths: [],
-    pathOperator: (paths$, state$) =>
-      paths$.pipe(
-        tap(paths => sideEffect(paths)),
-        ignoreElements(),
-      ),
-  },
-];
+const exampleEpic = (action$, state$) =>
+  action$.pipe(
+    createStateSubscription(state$, {
+      paths: ['x.y.z', 'a.b.*', '*.c.d'],
+    }),
+    tap(paths => {
+      paths.forEach({ pathPattern, path } => {
+        console.log(`path ${path} has been reported to change because of matched pattern ${pathPattern}`);
+      });
+    }),
+    ignoreElements()
+  );
 ```

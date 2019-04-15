@@ -2,7 +2,7 @@
 
 Epicly perform actions and side effects when `*.the.paths.you.care.about` change in the Redux store.
 
-If you have not used Redux-Observable epics before, read about them [here](https://redux-observable.js.org/docs/basics/Epics.html).
+If you have not used Redux-Observable epics before, [here's a link](https://redux-observable.js.org/docs/basics/Epics.html) to the documentation.
 
 ## Installation
 

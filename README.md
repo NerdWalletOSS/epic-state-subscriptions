@@ -47,9 +47,9 @@ State subscription configurations have the following API:
 | paths         | Array<String> | false    | [ ]          | The `.` delimited initial paths to watch in the Redux store with support for wildcards such as `store.*.y`   |
 
 
-## Using Stream Operators
+## Advanced Subscriptions
 
-As a standard RxJS operator, your Epic can chain `createStateSubscription` to support common use cases like buffering path changes:
+As a standard RxJS operator, your Epic can chain `createStateSubscription` to support additional use cases like buffering path changes:
 
 ```
 import { createStateSubscription } from 'epic-state-subscriptions';

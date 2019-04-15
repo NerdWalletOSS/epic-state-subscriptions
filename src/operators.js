@@ -2,6 +2,7 @@ import _ from "lodash";
 import { filter, map } from "rxjs/operators";
 import uuid from "uuid/v4";
 import { findUpdatedStateSubscriptionPaths } from "./utils";
+import { getStateSubscriptionOverridePaths } from "./selectors";
 
 // The state subscription path cache records cache entries for each distinct state subscription path the client has configured to watch.
 // When the state in the cache is different from the current state of the Redux store, a cache miss has occurred
@@ -34,7 +35,7 @@ export const createStateSubscription = (state$, config) => action$ => {
     map(() => {
       const currentState = state$.value;
       const currentStateSubscriptionPathPatterns =
-        getStateSubscriptionPaths(state$.value) || pathPatterns;
+        getStateSubscriptionOverridePaths(state$.value) || pathPatterns;
 
       // Filter the cache to only include entries for patterns that are still being subscribed to,
       // this way if the formerly subscribed path is re-added, there will be a cache miss

@@ -9,10 +9,10 @@ Object.defineProperty(exports, "overrideStateSubscriptionPaths", {
     return _actions.overrideStateSubscriptionPaths;
   }
 });
-Object.defineProperty(exports, "createStateSubscriptionEpics", {
+Object.defineProperty(exports, "createStateSubscription", {
   enumerable: true,
   get: function () {
-    return _epics.createStateSubscriptionEpics;
+    return _operators.createStateSubscription;
   }
 });
 Object.defineProperty(exports, "stateSubscriptionReducer", {
@@ -30,7 +30,7 @@ Object.defineProperty(exports, "getStateSubscriptionOverridePaths", {
 
 var _actions = require("./actions");
 
-var _epics = require("./epics");
+var _operators = require("./operators");
 
 var _reducers = require("./reducers");
 

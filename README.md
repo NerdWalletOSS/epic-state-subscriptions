@@ -1,6 +1,6 @@
 # Epic State Subscriptions
 
-Epicly perform actions and side effects when paths like `store.x.y.z` changes in the Redux store using Redux-Observable.
+Epicly perform actions and side effects when `*.the.paths.you.care.about` change in the Redux store using RxJS streams.
 
 ## Installation
 
@@ -34,7 +34,7 @@ const stateSubscriptionConfigs = [
 ```
 
 Then supply the config to the `createStateSubscriptionEpics` epic generator method which creates an array of epics to be included
-in your Redux-Observable `combineEpics` method alongside your other epics. If you are unfamiliar with Epics, read about them [here](https://redux-observable.js.org/docs/basics/Epics.html).
+in your Redux-Observable `combineEpics` method alongside your other epics. If you have not used Redux-Observable epics before, read about them [here](https://redux-observable.js.org/docs/basics/Epics.html).
 
 ```
 import { createStateSubscriptionEpics } from 'epic-state-subscriptions';

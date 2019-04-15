@@ -44,7 +44,7 @@ State subscription configurations have the following API:
 |Option         | Type          | Required | Default      | Description                                                                        |
 |---------------|---------------|----------|--------------|------------------------------------------------------------------------------------|
 | key           | String        | false    | Random uuid  | Optional key name to identify the subscription                                                   |
-| paths         | Array<String> | false    | [ ]          | The `.` delimited initial paths to watch in the Redux store with support for wildcards `store.*.y`   |
+| paths         | Array<String> | false    | [ ]          | The `.` delimited initial paths to watch in the Redux store with support for wildcards such as `store.*.y`   |
 
 
 ## Using Stream Operators

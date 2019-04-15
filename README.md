@@ -33,7 +33,9 @@ const exampleEpic = (action$, state$) =>
   );
 ```
 
-Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
+The path changes are emitted as objects consisting of the `path` that changed and the `pathPattern` that the path matched. In the above example, if path `a.b.c` had changed, the path object emitted would be `{ path: 'a.b.c', pathPattern: 'a.b.*' }`.
+
+Note: Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
 
 ## Configuration Options
 

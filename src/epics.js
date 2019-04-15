@@ -28,12 +28,11 @@ export const createStateSubscriptionEpics = stateSubscriptionConfigs =>
     // Map the state subscription configuration provided by the client to a state subscription epic.
     stateSubscriptionConfig => (action$, state$) => {
       const {
-        key,
-        paths: initialSubscriptionPaths,
+        key: subscriptionKey = uuid(),
+        paths: initialSubscriptionPaths = [],
         pathOperator
       } = stateSubscriptionConfig;
       // default to an arbitrary uuid if the client does not specify a desired key for the state subscription.
-      const subscriptionKey = key || uuid();
       // Initialize the cache for the state subscription so that an update in the Redux store to that path will
       // cause a cache miss.
       stateSubscriptionPathCache[subscriptionKey] = {};

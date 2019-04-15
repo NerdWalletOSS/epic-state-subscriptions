@@ -2,7 +2,7 @@ import _ from "lodash";
 import { ActionsObservable, StateObservable } from "redux-observable";
 import { mergeMap, tap, toArray } from "rxjs/operators";
 import { Subject } from "rxjs";
-import { createStateSubscriptionEpics } from "../src/epics";
+import { createStateSubscription } from "../src/operators";
 import { makeActionCreator } from "../src/actions";
 import * as selectors from "../src/selectors";
 
@@ -43,19 +43,17 @@ describe("state subscriptions epic", () => {
       paths = ["testPath"];
       triggerPayload = { triggered: true };
       handledPayload = { handled: true };
-      [stateSubscriptionEpic] = createStateSubscriptionEpics([
-        {
-          paths,
-          pathOperator: paths$ =>
-            paths$.pipe(
-              mergeMap(() =>
-                createActionStream(
-                  handleSubscriptionChangeAction({ testPath: handledPayload })
-                )
-              )
+      stateSubscriptionEpic = (action$, state$) =>
+        action$.pipe(
+          createStateSubscription(state$, {
+            paths
+          }),
+          mergeMap(() =>
+            createActionStream(
+              handleSubscriptionChangeAction({ testPath: handledPayload })
             )
-        }
-      ]);
+          )
+        );
     });
 
     describe("with a primitive change", () => {
@@ -113,21 +111,17 @@ describe("state subscriptions epic", () => {
       paths = ["testPath.*.leafPath"];
       triggerPayload = { nested: { leafPath: { triggered: true } } };
       handledPayload = { nested: { leafPath: { handled: true } } };
-      [stateSubscriptionEpic] = createStateSubscriptionEpics([
-        {
-          paths,
-          pathOperator: paths$ =>
-            paths$.pipe(
-              mergeMap(() =>
-                createActionStream(
-                  handleSubscriptionChangeAction({
-                    testPath: handledPayload
-                  })
-                )
-              )
+      stateSubscriptionEpic = stateSubscriptionEpic = (action$, state$) =>
+        action$.pipe(
+          createStateSubscription(state$, {
+            paths
+          }),
+          mergeMap(() =>
+            createActionStream(
+              handleSubscriptionChangeAction({ testPath: handledPayload })
             )
-        }
-      ]);
+          )
+        );
     });
 
     test("should trigger for changes to monitored paths in the store", async () => {
@@ -164,21 +158,17 @@ describe("state subscriptions epic", () => {
       paths = ["testPath.*"];
       triggerPayload = { nested: { triggered: true } };
       handledPayload = { nested: { handled: true } };
-      [stateSubscriptionEpic] = createStateSubscriptionEpics([
-        {
-          paths,
-          pathOperator: paths$ =>
-            paths$.pipe(
-              mergeMap(() =>
-                createActionStream(
-                  handleSubscriptionChangeAction({
-                    testPath: handledPayload
-                  })
-                )
-              )
+      stateSubscriptionEpic = stateSubscriptionEpic = (action$, state$) =>
+        action$.pipe(
+          createStateSubscription(state$, {
+            paths
+          }),
+          mergeMap(() =>
+            createActionStream(
+              handleSubscriptionChangeAction({ testPath: handledPayload })
             )
-        }
-      ]);
+          )
+        );
     });
 
     test("should trigger for changes to monitored paths in the store", async () => {
@@ -215,21 +205,17 @@ describe("state subscriptions epic", () => {
       paths = ["*"];
       triggerPayload = { triggered: true };
       handledPayload = { handled: true };
-      [stateSubscriptionEpic] = createStateSubscriptionEpics([
-        {
-          paths,
-          pathOperator: paths$ =>
-            paths$.pipe(
-              mergeMap(() =>
-                createActionStream(
-                  handleSubscriptionChangeAction({
-                    testPath: handledPayload
-                  })
-                )
-              )
+      stateSubscriptionEpic = stateSubscriptionEpic = (action$, state$) =>
+        action$.pipe(
+          createStateSubscription(state$, {
+            paths
+          }),
+          mergeMap(() =>
+            createActionStream(
+              handleSubscriptionChangeAction({ testPath: handledPayload })
             )
-        }
-      ]);
+          )
+        );
     });
 
     test("should trigger for changes to monitored paths in the store", async () => {
@@ -258,21 +244,23 @@ describe("state subscriptions epic", () => {
         .mockReturnValue(["testPathOverride"]);
       triggerPayload = { triggered: true };
       handledPayload = { handled: true };
-      [stateSubscriptionEpic] = createStateSubscriptionEpics([
-        {
-          paths,
-          pathOperator: paths$ =>
-            paths$.pipe(
-              mergeMap(() =>
-                createActionStream(
-                  handleSubscriptionChangeAction({
-                    testPathOverride: handledPayload
-                  })
-                )
+      stateSubscriptionEpic = stateSubscriptionEpic = (action$, state$) =>
+        action$.pipe(
+          createStateSubscription(state$, {
+            pathSelector: state =>
+              selectors.getStateSubscriptionOverridePaths(
+                state,
+                "testPathOverride"
               )
+          }),
+          mergeMap(() =>
+            createActionStream(
+              handleSubscriptionChangeAction({
+                testPathOverride: handledPayload
+              })
             )
-        }
-      ]);
+          )
+        );
     });
 
     afterEach(() => {

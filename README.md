@@ -69,7 +69,7 @@ import { sideEffectAction } from '../Actions';
 
 export default [
   {
-    key: 'perfTool',
+    key: 'exampleKey',
     paths: [],
     pathOperator: (paths$, state$) =>
       paths$.pipe(
@@ -110,3 +110,24 @@ dispatch(overrideStateSubscriptionPaths({ stateSubscriptionKey: 'exampleKey', pa
 
 supplying the key specified in your config and the new paths to watch.
 
+## FAQs
+
+1. My state subscription just needs to perform side effects and not fire any actions, how do I set up my `pathOperator`?
+
+You can use the `tap` operator to perform side effects and use the `ignoreElements` operator to instruct the stream to not emit elements and fire a termination event:
+
+```
+import { ignoreElements, tap } from 'rxjs/operators';
+import { sideEffect } from '../utils';
+
+export default [
+  {
+    paths: [],
+    pathOperator: (paths$, state$) =>
+      paths$.pipe(
+        tap(paths => sideEffect(paths)),
+        ignoreElements(),
+      ),
+  },
+];
+```

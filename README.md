@@ -1,5 +1,4 @@
-# redux-observable-state-subscriptions (ROSS)
-![Ross from Friends](http://trackingboard1.wpengine.netdna-cdn.com/wp-content/uploads/2017/12/ross-geller.jpg)
+# Epic State Subscriptions
 
 Automatically perform a side effect when path `store.x.y.z` changes in the Redux store using RxJS observables.
 

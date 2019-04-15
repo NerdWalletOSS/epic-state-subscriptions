@@ -91,7 +91,7 @@ and then you can dispatch the `overrideStateSubscriptionPaths` action:
 ```
 import { overrideStateSubscriptionPaths } from 'epic-state-subscriptions';
 
-dispatch(overrideStateSubscriptionPaths({ stateSubscriptionKey: 'exampleKey', paths: ['state.x.y'] });
+dispatch(overrideStateSubscriptionPaths({ key: 'exampleKey', paths: ['state.x.y'] });
 ```
 
 The state subscription key passed in the action should match the key in the `createStateSubscription` config. It automatically will now favour configurations in the reducer at that subscription key over the static initial paths specified in the config.

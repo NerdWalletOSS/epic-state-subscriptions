@@ -47,7 +47,7 @@ const createStateSubscription = (state$, config) => action$ => {
 
   const filteredStateSubscriptionPaths$ = action$.pipe((0, _operators.map)(() => {
     const currentState = state$.value;
-    const currentStateSubscriptionPathPatterns = (0, _selectors.getStateSubscriptionOverridePaths)(state$.value) || pathPatterns; // Filter the cache to only include entries for patterns that are still being subscribed to,
+    const currentStateSubscriptionPathPatterns = (0, _selectors.getStateSubscriptionOverridePaths)(state$.value, subscriptionKey) || pathPatterns; // Filter the cache to only include entries for patterns that are still being subscribed to,
     // this way if the formerly subscribed path is re-added, there will be a cache miss
 
     const currentStateSubscriptionPathCache = stateSubscriptionPathCache[subscriptionKey];

@@ -60,7 +60,6 @@ export const createStateSubscription = (state$, config) => action$ => {
     filter(paths => paths.length > 0)
   );
 
-  // Returns the stream that was first processed into paths and then delivered to the client path operator
-  // which executes client logic optionally triggering actions or performing side effects.
+  // Returns a stream of paths that are emitted when changes have been detected
   return filteredStateSubscriptionPaths$;
 };

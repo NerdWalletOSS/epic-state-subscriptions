@@ -105,6 +105,7 @@ and then you can dispatch the `overrideStateSubscriptionPaths` action:
 
 ```
 import { overrideStateSubscriptionPaths } from 'epic-state-subscriptions';
+
 dispatch(overrideStateSubscriptionPaths({ stateSubscriptionKey: 'exampleKey', paths: ['state.x.y'] });
 ```
 

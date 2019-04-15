@@ -37,7 +37,7 @@ Then supply the config to the `createStateSubscriptionEpics` epic generator meth
 in your Redux-Observable `combineEpics` method alongside your other epics. If you are unfamiliar with Epics, read about them [here](https://redux-observable.js.org/docs/basics/Epics.html).
 
 ```
-import { createStateSubscriptionEpics } from 'redux-observable-state-subscriptions';
+import { createStateSubscriptionEpics } from 'epic-state-subscriptions';
 
 const rootEpic = combineEpics(
   yourEpic,
@@ -95,7 +95,7 @@ overriding the default paths initialized in the config.
 Include the state subscriptions reducer in your `combineReducers` redux configuration:
 
 ```
-import { stateSubscriptionReducer } from 'redux-observable-state-subscriptions';
+import { stateSubscriptionReducer } from 'epic-state-subscriptions';
 import { combineReducers } from 'redux';
 
 const rootReducer = combineReducers([...reducers, stateSubscriptionReducer]);

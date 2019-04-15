@@ -2,7 +2,7 @@
   "name": "epic-state-subscriptions",
   "version": "0.0.1",
   "description": "An epic state subscription library using Redux-Observable",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "jest": "jest --init",

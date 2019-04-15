@@ -55,7 +55,7 @@ State subscription configurations have the following API:
 |---------------|---------------|----------|--------------|------------------------------------------------------------------------------------|
 | key           | String        | false    | Random uuid  | Optional key name for the config                                                   |
 | paths         | Array<String> | false    | [ ]          | The paths of the form `store.path1.path2` with support for wildcards `store.*.y`   |
-| pathOperator  | Function      | true     | N/A          | The path operator to transform a stream of path changes to actions or side effects. The stream emits an array of the form `[{ path: ..., pathPattern: ... }]` where each of the objects is a specific path that changed because of the specific matched pattern. |
+| pathOperator  | Function      | true     | N/A          | The path operator to transform a stream of path changes to actions or side effects. The stream emits an array of the form `[{ path: ..., pathPattern: ... }]` where each of the path objects consists of the path that changed and the pattern it matched. |
 
 ## Using Stream Operators
 

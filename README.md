@@ -1,6 +1,6 @@
 # Epic State Subscriptions
 
-Automatically perform a side effect when path `store.x.y.z` changes in the Redux store using RxJS observables.
+Epicly perform actions and side effects when paths like `store.x.y.z` changes in the Redux store using Redux-Observable.
 
 ## Installation
 

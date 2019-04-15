@@ -7,7 +7,7 @@
     "test": "jest",
     "jest": "jest --init",
     "babel": "babel --copy-files --out-dir dist src",
-    "prepare": "npm run test && npm run lint && npm run babel",
+    "build": "npm run test && npm run lint && npm run babel",
     "clean": "rm -rf dist",
     "lint": "eslint src --ext .js"
   },

@@ -7,7 +7,7 @@ Epicly perform actions and side effects when paths like `store.x.y.z` changes in
 There is an additional peer dependency of `redux-observable@^1.1.x`
 
 ```javascript
-npm install redux-observable-state-subscriptions
+npm install epic-state-subscriptions
 ```
 
 ## Basic Usage

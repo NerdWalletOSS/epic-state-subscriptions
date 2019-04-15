@@ -8,10 +8,10 @@ export const stateSubscriptionReducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case overrideStateSubscriptionPaths.type: {
       const {
-        payload: { stateSubscriptionKey, paths }
+        payload: { key, paths }
       } = action;
       return Object.assign({}, state, {
-        [stateSubscriptionKey]: paths
+        [key]: paths
       });
     }
     default:

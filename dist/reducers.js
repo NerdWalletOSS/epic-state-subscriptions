@@ -18,12 +18,12 @@ const stateSubscriptionReducer = (state = initialState, action = {}) => {
       {
         const {
           payload: {
-            stateSubscriptionKey,
+            key,
             paths
           }
         } = action;
         return Object.assign({}, state, {
-          [stateSubscriptionKey]: paths
+          [key]: paths
         });
       }
 

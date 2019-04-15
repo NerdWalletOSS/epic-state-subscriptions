@@ -14,7 +14,7 @@ describe("stateSubscriptionReducer", () => {
         stateSubscriptionReducer(
           initialState,
           overrideStateSubscriptionPaths({
-            stateSubscriptionKey: "subscriptionKey",
+            key: "subscriptionKey",
             paths: ["testPath"]
           })
         )

@@ -18,17 +18,11 @@ const stateSubscriptionPathCache = {};
  * of dynamic path overrides configurable via the `updateStateSubscriptionPaths` action
  * @param {Array?} config.paths - The paths that the client has configured to watch
  * initiated by the client
- * @param {Function?} config.pathSelector - A selector function that retrieves the desired paths from the Redux store. This is used
- * for supporting dynamic paths and supercedes the paths array
  * @return {Observable} - An observable that emits path change objects
  */
 export const createStateSubscription = (state$, config) => action$ => {
   // default to an arbitrary uuid if the client does not specify a desired key for the state subscription.
-  const {
-    key: subscriptionKey = uuid(),
-    paths: pathPatterns = [],
-    pathSelector
-  } = config;
+  const { key: subscriptionKey = uuid(), paths: pathPatterns = [] } = config;
 
   // Initialize the cache for the state subscription so that an update in the Redux store to that path will
   // cause a cache miss.
@@ -39,9 +33,8 @@ export const createStateSubscription = (state$, config) => action$ => {
   const filteredStateSubscriptionPaths$ = action$.pipe(
     map(() => {
       const currentState = state$.value;
-      const currentStateSubscriptionPathPatterns = pathSelector
-        ? pathSelector(state$.value) || []
-        : pathPatterns;
+      const currentStateSubscriptionPathPatterns =
+        getStateSubscriptionPaths(state$.value) || pathPatterns;
 
       // Filter the cache to only include entries for patterns that are still being subscribed to,
       // this way if the formerly subscribed path is re-added, there will be a cache miss

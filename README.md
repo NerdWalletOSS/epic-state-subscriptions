@@ -61,8 +61,7 @@ State subscription configurations have the following API:
 
 ## Using Stream Operators
 
-State subscriptions can take an advantage of standard RxJS operators to create complex state subscriptions. Here is an example of
-a state subscription that buffers and aggregates changes over a fixed interval:
+As observable streams, state subscriptions can leverage standard RxJS operators to create complex state subscriptions. Here is an example of a state subscription that buffers and aggregates changes over a fixed interval:
 
 ```
 import { bufferTime, filter, map } from 'rxjs/operators';

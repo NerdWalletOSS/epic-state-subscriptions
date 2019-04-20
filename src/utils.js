@@ -18,7 +18,7 @@ export const shallowEqual = (obj1, obj2) => {
 };
 
 /**
- * Determines if there are dirty state subscription paths for a nested path where nested is defined as a
+ * Determines if there are dirty state subscription paths for a nested path pattern where nested is defined as a
  * `*` property such as `state.x.*`. It traverses each top level key off of `state.x` and aggregates dirty paths.
  *
  * @param {String} stateSubscriptionKey - The state subscription identifier key
@@ -70,7 +70,7 @@ const findNestedDirtySubscriptionPaths = (
 };
 
 /**
- * Determines if there is a dirty state subscription path for the given path such as `state.x`.
+ * Determines if there is a dirty state subscription path for the given path pattern such as `state.x`.
  *
  * @param {String} stateSubscriptionKey - The state subscription identifier key
  * @param {String} stateSubscriptionPathCache - The subscription cache used to compare the current redux state with the cached value

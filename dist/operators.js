@@ -40,10 +40,14 @@ const createStateSubscription = (state$, config) => action$ => {
     key: subscriptionKey = (0, _v.default)(),
     paths: pathPatterns = []
   } = config; // Initialize the cache for the state subscription so that an update in the Redux store to that path will
-  // cause a cache miss.
+  // cause a cache miss. If it already exists then the operator has already been used with that key
+  // and on re-creation it should not clear the existing cache.
 
-  stateSubscriptionPathCache[subscriptionKey] = {}; // Modify the stream of actions received by the epic to return a stream of dirty string paths to be handled by the
+  if (!stateSubscriptionPathCache[subscriptionKey]) {
+    stateSubscriptionPathCache[subscriptionKey] = {};
+  } // Modify the stream of actions received by the epic to return a stream of dirty string paths to be handled by the
   // state subscription path operator.
+
 
   const filteredStateSubscriptionPaths$ = action$.pipe((0, _operators.map)(() => {
     const currentState = state$.value;

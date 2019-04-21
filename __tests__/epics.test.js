@@ -246,13 +246,7 @@ describe("state subscriptions epic", () => {
       handledPayload = { handled: true };
       stateSubscriptionEpic = stateSubscriptionEpic = (action$, state$) =>
         action$.pipe(
-          createStateSubscription(state$, {
-            pathSelector: state =>
-              selectors.getStateSubscriptionOverridePaths(
-                state,
-                "testPathOverride"
-              )
-          }),
+          createStateSubscription(state$, {}),
           mergeMap(() =>
             createActionStream(
               handleSubscriptionChangeAction({

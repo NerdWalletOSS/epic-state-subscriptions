@@ -33,7 +33,16 @@ const exampleEpic = (action$, state$) =>
   );
 ```
 
-The path changes are emitted as objects consisting of the `path` that changed and the `pathPattern` that the path matched. In the above example, if path `a.b.c` had changed, the path object emitted would be `{ path: 'a.b.c', pathPattern: 'a.b.*' }`.
+The path changes are emitted as objects consisting of the `path` that changed, the `pathPattern` that the path matched and the `prevState` and `nextState` of that path:
+
+| Key           | Type   | Description                                                           |
+|---------------|--------|-----------------------------------------------------------------------|
+| path          | String | The path that changed in the Redux store                              | 
+| pathPattern   | String | The state subscription path pattern that triggered the path to change |
+| prevState     | Any    | The previous state of the path that changed in the Redux store        |
+| nextState     | Any    | The new state of the path that changed in the Redux store             |
+
+In the above example, if path `a.b.c` had changed from `false` to `true` the path object emitted would be `{ prevState: false, nextState: true, path: 'a.b.c', pathPattern: 'a.b.*' }`.
 
 Note: Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
 
@@ -65,7 +74,7 @@ const exampleEpic (action$, state$) =>
       paths: ['a.b.c'],
     }),
     map(paths => {
-      paths.forEach({ pathPattern, path } => {
+      paths.forEach({ prevState, nextState, pathPattern, path } => {
         console.log(`path ${path} has been reported to change because of matched pattern ${pathPattern}`);
       });
       return sideEffectAction(changeSet);

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { stateSubscriptionPathCache } from "./cache";
 
 /**
  * A basic shallow equal comparison utility
@@ -22,7 +23,6 @@ export const shallowEqual = (obj1, obj2) => {
  * `*` property such as `state.x.*`. It traverses each top level key off of `state.x` and aggregates dirty paths.
  *
  * @param {String} stateSubscriptionKey - The state subscription identifier key
- * @param {String} stateSubscriptionPathCache - The subscription cache used to compare the current redux state with the cached value
  * @param {Array} pathComponents - The state subscription path delimited into an array by `.`
  * @param {Object} state - The current state of the Redux store
  * @param {Number} pathIndex - The path component index currently being traversed
@@ -31,7 +31,6 @@ export const shallowEqual = (obj1, obj2) => {
  */
 const findNestedDirtySubscriptionPaths = (
   stateSubscriptionKey,
-  stateSubscriptionPathCache,
   pathPattern,
   pathComponents,
   state,
@@ -57,7 +56,6 @@ const findNestedDirtySubscriptionPaths = (
         ...acc,
         ...callback(
           stateSubscriptionKey,
-          stateSubscriptionPathCache,
           pathPattern,
           newPathComponents,
           state,
@@ -73,7 +71,6 @@ const findNestedDirtySubscriptionPaths = (
  * Determines if there is a dirty state subscription path for the given path pattern such as `state.x`.
  *
  * @param {String} stateSubscriptionKey - The state subscription identifier key
- * @param {String} stateSubscriptionPathCache - The subscription cache used to compare the current redux state with the cached value
  * @param {String} pathPattern - The original state subscription path pattern
  * @param {Array} pathComponents - The state subscription path delimited into an array by `.`
  * @param {Object} state - The current state of the Redux store
@@ -83,7 +80,6 @@ const findNestedDirtySubscriptionPaths = (
  */
 const findDirtySubscriptionPaths = (
   stateSubscriptionKey,
-  stateSubscriptionPathCache,
   pathPattern,
   pathComponents,
   state,
@@ -100,7 +96,6 @@ const findDirtySubscriptionPaths = (
       ...foundPaths,
       ...findNestedDirtySubscriptionPaths(
         stateSubscriptionKey,
-        stateSubscriptionPathCache,
         pathPattern,
         pathComponents,
         state,
@@ -130,7 +125,7 @@ const findDirtySubscriptionPaths = (
     const currentPathState = _.get(state, stringPath);
     if (!shallowEqual(currentPathState, cachedPathState)) {
       // If the state subscription path is dirty, update the state subscription cache for that path.
-      // The cached paths are stored under the pattern {subscriptionKey}{pathPattern}{cacheHitKey}
+      // The cached paths are stored under the pattern {subscriptionKey}.{pathPattern}.{cacheHitKey}
       _.set(
         stateSubscriptionPathCache,
         [stateSubscriptionKey, pathPattern, stringPath],
@@ -152,7 +147,6 @@ const findDirtySubscriptionPaths = (
   // Only a partial path has been traversed so far so it continues the recursion at the next path index
   return findDirtySubscriptionPaths(
     stateSubscriptionKey,
-    stateSubscriptionPathCache,
     pathPattern,
     pathComponents,
     state,
@@ -174,7 +168,6 @@ const findDirtySubscriptionPaths = (
 // eslint-disable-next-line import/prefer-default-export
 export const findUpdatedStateSubscriptionPaths = (
   stateSubscriptionKey,
-  stateSubscriptionPathCache,
   pathPatterns,
   state
 ) =>
@@ -184,7 +177,6 @@ export const findUpdatedStateSubscriptionPaths = (
       ...acc,
       ...findDirtySubscriptionPaths(
         stateSubscriptionKey,
-        stateSubscriptionPathCache,
         pathPattern,
         pathPattern.split("."),
         state

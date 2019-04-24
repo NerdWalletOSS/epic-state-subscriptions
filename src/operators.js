@@ -3,11 +3,7 @@ import { filter, map } from "rxjs/operators";
 import uuid from "uuid/v4";
 import { findUpdatedStateSubscriptionPaths } from "./utils";
 import { getStateSubscriptionOverridePaths } from "./selectors";
-
-// The state subscription path cache records cache entries for each distinct state subscription path the client has configured to watch.
-// When the state in the cache is different from the current state of the Redux store, a cache miss has occurred
-// and the client's path operator will receive the updated path in their path stream which they can then process.
-const stateSubscriptionPathCache = {};
+import { stateSubscriptionPathCache } from "./cache";
 
 /**
  * An RxJS operator that converts a stream of actions into a stream of updated paths emitted
@@ -55,7 +51,6 @@ export const createStateSubscription = (state$, config) => action$ => {
       // Paths are collected in the format { path: path, pathPattern: pathPattern }
       return findUpdatedStateSubscriptionPaths(
         subscriptionKey,
-        stateSubscriptionPathCache,
         currentStateSubscriptionPathPatterns,
         currentState
       );

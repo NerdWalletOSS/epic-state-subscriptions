@@ -120,3 +120,30 @@ const exampleEpic = (action$, state$) =>
     ignoreElements()
   );
 ```
+
+2. My state subscription is created dynamically and it is updating incorrectly, what gives?
+
+An operator that is applied dynamically and more than once needs to share the same key as the previous iteration to preserve its cache. Specify a `key` in your subscription and it will behave as expected.
+
+```
+import { ignoreElements, tap } from 'rxjs/operators';
+import { createStateSubscription } from 'epic-state-subscriptions';
+import { sideEffectAction } from './actions';
+
+const exampleEpic = (action$, state$) =>
+  action$.pipe(
+    mergeMap(action => {
+      return of(action).pipe(
+        createStateSubscription(state$, {
+          key: 'dynamicSubscription',
+          paths: ['x.y.z', 'a.b.*', '*.c.d'],
+        }),
+        tap(paths => {
+          paths.forEach({ pathPattern, path } => {
+          console.log(`path ${path} has been reported to change because of matched pattern ${pathPattern}`);
+        }),
+        ignoreElements()
+      )
+    }),
+  );
+```

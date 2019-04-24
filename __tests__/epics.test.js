@@ -39,21 +39,42 @@ describe("state subscriptions epic", () => {
   });
 
   describe("with simple paths", () => {
+    let stateSubscriptionEpic = (action$, state$) =>
+      action$.pipe(
+        createStateSubscription(state$, {
+          paths
+        }),
+        mergeMap(() =>
+          createActionStream(
+            handleSubscriptionChangeAction({ testPath: handledPayload })
+          )
+        )
+      );
+
     beforeEach(() => {
       paths = ["testPath"];
       triggerPayload = { triggered: true };
       handledPayload = { handled: true };
+    });
+
+    test("should trigger path changesets with all the expected params", () => {
+      const oldStateSubscriptionEpic = stateSubscriptionEpic;
       stateSubscriptionEpic = (action$, state$) =>
         action$.pipe(
           createStateSubscription(state$, {
             paths
           }),
-          mergeMap(() =>
-            createActionStream(
+          mergeMap(({ prevState, nextState, path, pathPattern }) => {
+            expect(prevState).toEqual(undefined);
+            expect(nextState).toEqual(handledPayload);
+            expect(path).toEqual("testPath");
+            expect(pathPattern).toEqual("testPath");
+            return createActionStream(
               handleSubscriptionChangeAction({ testPath: handledPayload })
-            )
-          )
+            );
+          })
         );
+      stateSubscriptionEpic = oldStateSubscriptionEpic;
     });
 
     describe("with a primitive change", () => {

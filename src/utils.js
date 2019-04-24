@@ -123,20 +123,28 @@ const findDirtySubscriptionPaths = (
       stateSubscriptionPathCache[stateSubscriptionKey],
       pathPattern
     );
-    const subscriptionPath = _.get(
+    const cachedPathState = _.get(
       stateSubscriptionPathCacheForPattern,
       stringPath
     );
-    const stateSlice = _.get(state, stringPath);
-    if (!shallowEqual(stateSlice, subscriptionPath)) {
+    const currentPathState = _.get(state, stringPath);
+    if (!shallowEqual(currentPathState, cachedPathState)) {
       // If the state subscription path is dirty, update the state subscription cache for that path.
       // The cached paths are stored under the pattern {subscriptionKey}{pathPattern}{cacheHitKey}
       _.set(
         stateSubscriptionPathCache,
         [stateSubscriptionKey, pathPattern, stringPath],
-        stateSlice
+        currentPathState
       );
-      return [...foundPaths, { pathPattern, path: stringPath }];
+      return [
+        ...foundPaths,
+        {
+          nextState: currentPathState,
+          prevState: cachedPathState,
+          pathPattern,
+          path: stringPath
+        }
+      ];
     }
     return foundPaths;
   }

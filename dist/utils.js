@@ -7,6 +7,8 @@ exports.findUpdatedStateSubscriptionPaths = exports.shallowEqual = void 0;
 
 var _lodash = _interopRequireDefault(require("lodash"));
 
+var _cache = require("./cache");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -24,11 +26,10 @@ const shallowEqual = (obj1, obj2) => {
   return _lodash.default.every([...Object.keys(obj1), ...Object.keys(obj2)], key => obj1[key] === obj2[key]);
 };
 /**
- * Determines if there are dirty state subscription paths for a nested path where nested is defined as a
+ * Determines if there are dirty state subscription paths for a nested path pattern where nested is defined as a
  * `*` property such as `state.x.*`. It traverses each top level key off of `state.x` and aggregates dirty paths.
  *
  * @param {String} stateSubscriptionKey - The state subscription identifier key
- * @param {String} stateSubscriptionPathCache - The subscription cache used to compare the current redux state with the cached value
  * @param {Array} pathComponents - The state subscription path delimited into an array by `.`
  * @param {Object} state - The current state of the Redux store
  * @param {Number} pathIndex - The path component index currently being traversed
@@ -39,7 +40,7 @@ const shallowEqual = (obj1, obj2) => {
 
 exports.shallowEqual = shallowEqual;
 
-const findNestedDirtySubscriptionPaths = (stateSubscriptionKey, stateSubscriptionPathCache, pathPattern, pathComponents, state, pathIndex, callback) => {
+const findNestedDirtySubscriptionPaths = (stateSubscriptionKey, pathPattern, pathComponents, state, pathIndex, callback) => {
   const stringPath = pathComponents.slice(0, pathIndex).join(".");
   const stateSlice = pathIndex === 0 ? state : _lodash.default.get(state, stringPath); // If the state of the redux store is an object, we want to traverse each key under the object
   // to determine if the top-level keys are dirty.
@@ -51,17 +52,16 @@ const findNestedDirtySubscriptionPaths = (stateSubscriptionKey, stateSubscriptio
       // Consider the case where `state.x.y.z` exists and we are recursing on the state subscription `state.x.*.z`
       // Here it would be looping over all the keys for `state.x`, discover y and then recurse with the path `state.x.y.z`
       const newPathComponents = [...pathComponents.slice(0, pathIndex), slicePath, ...pathComponents.slice(pathIndex + 1, pathComponents.length)];
-      return [...acc, ...callback(stateSubscriptionKey, stateSubscriptionPathCache, pathPattern, newPathComponents, state, pathIndex)];
+      return [...acc, ...callback(stateSubscriptionKey, pathPattern, newPathComponents, state, pathIndex)];
     }, []);
   }
 
   return [];
 };
 /**
- * Determines if there is a dirty state subscription path for the given path such as `state.x`.
+ * Determines if there is a dirty state subscription path for the given path pattern such as `state.x`.
  *
  * @param {String} stateSubscriptionKey - The state subscription identifier key
- * @param {String} stateSubscriptionPathCache - The subscription cache used to compare the current redux state with the cached value
  * @param {String} pathPattern - The original state subscription path pattern
  * @param {Array} pathComponents - The state subscription path delimited into an array by `.`
  * @param {Object} state - The current state of the Redux store
@@ -71,14 +71,14 @@ const findNestedDirtySubscriptionPaths = (stateSubscriptionKey, stateSubscriptio
  */
 
 
-const findDirtySubscriptionPaths = (stateSubscriptionKey, stateSubscriptionPathCache, pathPattern, pathComponents, state, pathIndex = 0, foundPaths = []) => {
+const findDirtySubscriptionPaths = (stateSubscriptionKey, pathPattern, pathComponents, state, pathIndex = 0, foundPaths = []) => {
   const pathComponent = pathComponents[pathIndex]; // Nested Recursive case:
   // If the current state subscription path component being traversed is a `*`, we want to check all paths
   // under the current state, so we call the helper method `findNestedDirtySubscriptionPaths` to check
   // the nested paths under the current state subscription path.
 
   if (pathComponent === "*") {
-    return [...foundPaths, ...findNestedDirtySubscriptionPaths(stateSubscriptionKey, stateSubscriptionPathCache, pathPattern, pathComponents, state, pathIndex, findDirtySubscriptionPaths)]; // Base case:
+    return [...foundPaths, ...findNestedDirtySubscriptionPaths(stateSubscriptionKey, pathPattern, pathComponents, state, pathIndex, findDirtySubscriptionPaths)]; // Base case:
     // If we are traversing the path components and have reached the final one, we want to check the state
     // at the full string path re-created by joining the preceding and current state subscription path components with
     // the state subscription cache for that path.
@@ -88,18 +88,20 @@ const findDirtySubscriptionPaths = (stateSubscriptionKey, stateSubscriptionPathC
     // `bar` under the test slice of the redux store would store the cached entry for each at paths
     // `group1.test.*.foo and `group1.test.*.bar` in the cache
 
-    const stateSubscriptionPathCacheForPattern = _lodash.default.get(stateSubscriptionPathCache[stateSubscriptionKey], pathPattern);
+    const stateSubscriptionPathCacheForPattern = _lodash.default.get(_cache.stateSubscriptionPathCache[stateSubscriptionKey], pathPattern);
 
-    const subscriptionPath = _lodash.default.get(stateSubscriptionPathCacheForPattern, stringPath);
+    const cachedPathState = _lodash.default.get(stateSubscriptionPathCacheForPattern, stringPath);
 
-    const stateSlice = _lodash.default.get(state, stringPath);
+    const currentPathState = _lodash.default.get(state, stringPath);
 
-    if (!shallowEqual(stateSlice, subscriptionPath)) {
+    if (!shallowEqual(currentPathState, cachedPathState)) {
       // If the state subscription path is dirty, update the state subscription cache for that path.
-      // The cached paths are stored under the pattern {subscriptionKey}{pathPattern}{cacheHitKey}
-      _lodash.default.set(stateSubscriptionPathCache, [stateSubscriptionKey, pathPattern, stringPath], stateSlice);
+      // The cached paths are stored under the pattern {subscriptionKey}.{pathPattern}.{cacheHitKey}
+      _lodash.default.set(_cache.stateSubscriptionPathCache, [stateSubscriptionKey, pathPattern, stringPath], currentPathState);
 
       return [...foundPaths, {
+        nextState: currentPathState,
+        prevState: cachedPathState,
         pathPattern,
         path: stringPath
       }];
@@ -110,7 +112,7 @@ const findDirtySubscriptionPaths = (stateSubscriptionKey, stateSubscriptionPathC
   // Only a partial path has been traversed so far so it continues the recursion at the next path index
 
 
-  return findDirtySubscriptionPaths(stateSubscriptionKey, stateSubscriptionPathCache, pathPattern, pathComponents, state, pathIndex + 1, foundPaths);
+  return findDirtySubscriptionPaths(stateSubscriptionKey, pathPattern, pathComponents, state, pathIndex + 1, foundPaths);
 };
 /**
  * Checks the given state subscription key to determine if any of its watched paths
@@ -125,7 +127,7 @@ const findDirtySubscriptionPaths = (stateSubscriptionKey, stateSubscriptionPathC
 // eslint-disable-next-line import/prefer-default-export
 
 
-const findUpdatedStateSubscriptionPaths = (stateSubscriptionKey, stateSubscriptionPathCache, pathPatterns, state) => // Aggregate all the paths that have changed together
-pathPatterns.reduce((acc, pathPattern) => [...acc, ...findDirtySubscriptionPaths(stateSubscriptionKey, stateSubscriptionPathCache, pathPattern, pathPattern.split("."), state)], []);
+const findUpdatedStateSubscriptionPaths = (stateSubscriptionKey, pathPatterns, state) => // Aggregate all the paths that have changed together
+pathPatterns.reduce((acc, pathPattern) => [...acc, ...findDirtySubscriptionPaths(stateSubscriptionKey, pathPattern, pathPattern.split("."), state)], []);
 
 exports.findUpdatedStateSubscriptionPaths = findUpdatedStateSubscriptionPaths;

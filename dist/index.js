@@ -27,6 +27,12 @@ Object.defineProperty(exports, "getStateSubscriptionOverridePaths", {
     return _selectors.getStateSubscriptionOverridePaths;
   }
 });
+Object.defineProperty(exports, "getCachedPathsForSubscription", {
+  enumerable: true,
+  get: function () {
+    return _cache.getCachedPathsForSubscription;
+  }
+});
 
 var _actions = require("./actions");
 
@@ -35,3 +41,5 @@ var _operators = require("./operators");
 var _reducers = require("./reducers");
 
 var _selectors = require("./selectors");
+
+var _cache = require("./cache");

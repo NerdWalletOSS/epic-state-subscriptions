@@ -33,6 +33,8 @@ const exampleEpic = (action$, state$) =>
   );
 ```
 
+> Note: Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
+
 The path changes are emitted as objects consisting of the `path` that changed, the `pathPattern` that the path matched and the `prevState` and `nextState` of that path:
 
 | Key           | Type   | Description                                                           |
@@ -43,8 +45,6 @@ The path changes are emitted as objects consisting of the `path` that changed, t
 | nextState     | Any    | The new state of the path that changed in the Redux store             |
 
 In the above example, if path `a.b.c` had changed from `false` to `true` the path object emitted would be `{ prevState: false, nextState: true, path: 'a.b.c', pathPattern: 'a.b.*' }`.
-
-Note: Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
 
 ## Configuration Options
 

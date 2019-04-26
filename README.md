@@ -33,7 +33,7 @@ const exampleEpic = (action$, state$) =>
   );
 ```
 
-The path changes are emitted as objects consisting of the `path` that changed, the `pathPattern` that the path matched and the `prevState` and `nextState` of that path:
+The path changes are emitted as objects with the structure below:
 
 | Key           | Type   | Description                                                           |
 |---------------|--------|-----------------------------------------------------------------------|

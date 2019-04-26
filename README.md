@@ -42,9 +42,11 @@ The path changes are emitted as objects with the structure below:
 | prevState     | Any    | The previous state of the path that changed in the Redux store        |
 | nextState     | Any    | The new state of the path that changed in the Redux store             |
 
+
 In the above example, if path `a.b.c` had changed from `false` to `true` the path object emitted would be `{ prevState: false, nextState: true, path: 'a.b.c', pathPattern: 'a.b.*' }`.
 
 > Note: Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
+
 
 ## Configuration Options
 
@@ -102,6 +104,7 @@ dispatch(overrideStateSubscriptionPaths({ key: 'exampleKey', paths: ['state.x.y'
 ```
 
 The state subscription key passed in the action should match the key in the `createStateSubscription` config. It automatically will now favour configurations in the reducer at that subscription key over the static initial paths specified in the config.
+
 
 ## FAQs
 

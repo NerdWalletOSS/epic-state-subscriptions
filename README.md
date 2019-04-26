@@ -2,7 +2,7 @@
 
 Epicly perform actions and side effects when `*.the.paths.you.care.about` change in the Redux store.
 
-If you have not used Redux-Observable epics before, [here's a link](https://redux-observable.js.org/docs/basics/Epics.html) to the documentation.
+If you have not used Redux-Observable Epics before, [here's a link](https://redux-observable.js.org/docs/basics/Epics.html) to the documentation.
 
 ## Installation
 
@@ -33,8 +33,6 @@ const exampleEpic = (action$, state$) =>
   );
 ```
 
-> Note: Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
-
 The path changes are emitted as objects consisting of the `path` that changed, the `pathPattern` that the path matched and the `prevState` and `nextState` of that path:
 
 | Key           | Type   | Description                                                           |
@@ -46,9 +44,9 @@ The path changes are emitted as objects consisting of the `path` that changed, t
 
 In the above example, if path `a.b.c` had changed from `false` to `true` the path object emitted would be `{ prevState: false, nextState: true, path: 'a.b.c', pathPattern: 'a.b.*' }`.
 
-## Configuration Options
+> Note: Since operators do not normally get access to the `state$` stream, it is passed explicitly as the first argument, followed by the configuration options.
 
-State subscription configurations have the following API:
+## Configuration Options
 
 |Option         | Type          | Required | Default      | Description                                                                        |
 |---------------|---------------|----------|--------------|------------------------------------------------------------------------------------|

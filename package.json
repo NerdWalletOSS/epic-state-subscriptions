@@ -1,18 +1,21 @@
 {
-  "name": "epic-state-subscriptions",
+  "name": "@nerdwallet/epic-state-subscriptions",
   "version": "0.0.1",
   "description": "An epic state subscription library using Redux-Observable",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
-    "jest": "jest --init",
+    "jest": "jest --coverage",
     "babel": "babel --copy-files --out-dir dist src",
     "build": "npm run test && npm run lint && npm run babel",
     "clean": "rm -rf dist",
     "lint": "eslint src --ext .js"
   },
   "homepage": "https://github.com/NerdWallet/epic-state-subscriptions",
-  "author": "",
+  "bugs": {
+    "url": "https://github.com/NerdWallet/epic-state-subscriptions/issues"
+  },
+  "author": "Dan Reynolds",
   "license": "MIT",
   "keywords": [
     "Rx",
@@ -45,5 +48,8 @@
     "redux": "^4.0.1",
     "rxjs": "^6.4.0",
     "uuid": "^3.3.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

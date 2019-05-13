@@ -9,7 +9,7 @@ If you have not used Redux-Observable Epics before, [here's a link](https://redu
 There is an additional peer dependency of `redux-observable@^1.1.x`
 
 ```javascript
-npm install epic-state-subscriptions
+npm i @nerdwallet/epic-state-subscriptions
 ```
 
 ## Basic Usage

@@ -1,29 +1,26 @@
 language: node_js
 node_js:
-  - 6
-  - 8
-  - 10
+- 6
+- 8
+- 10
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 script:
-  - npm run lint
-  - npm run test
-  - npm run build
-
+- npm run lint
+- npm run test
+- npm run build
 jobs:
   include:
-    - stage: npm release
-      # Only run this job for tagged commits
-      if: tag IS present
-      node_js: "10"
-      script: echo "Publishing to npm..."
-      deploy:
-        provider: npm
-        skip_cleanup: true
-        on:
-          tags: true
-        email: "npm@nerdwallet.com"
-        api_key:
-          secure: pVg+rCrDhJhU6wa9NvU1/rR+wI4vpYzqtT21tdFh+WJRbBLNz/ECfRKgIejp5zaSHcIXgsa+pZXwTHpldoYDBBnIQDb5NmEScurUBPwzmuwP0tMODxMnksv7ltTGqvwwdnfOH9gl/dKqXKZn65BL+xLmBaCXsGsQm9BlG1t4NK1kRHawLifu4jaHcuM1dJ1sLGSUqOry72Z7ZW2Io9vAHpUtxGYUN5wzUJtuOrtN2iRlW3py2A2mfzlQHNbWSH3yWywo1znOnmIvw2FeVnjmU3MPuDVi0SDtqm3JNNKX1fwTfAtSVrp8BHdcYa1oxtnBkDUJ7LdGwGCFtfEwrp0UCoJiHE8HbaJbltjoucJ9rXJ0oFzFWy8L7BJoG+4rHumqgYzCDinOfSTpj6OHydXf5Cn4hlnGP27nMH+bMMOfMUZCKDdnFjamk0Yi1XdsdwXqxWf7d+P7V3mvVh35c7PgR47sQ9HmMQQJXTPuoYxu+fRwkau7Q/eumHDCxFQBRWmLdwJf9aiNbUk19cKzO6emb1Xo3h8HOuc/Ib79p5P23LnHTLzFZnBt4xG7xBVap7FFRjfq2xgdTTYonoVZ7m306GQxydsJWXQMN09A/Qz9YhbQ+PiLMiJfjqL2dTGoVU/evhLhyCFD+snAvuJ3Ak6oW2CW+Sj9q0A3wovVE59ceWs=
+  - stage: npm release
+    if: tag IS present
+    node_js: '10'
+    script: echo "Publishing to npm..."
+    deploy:
+      provider: npm
+      skip_cleanup: true
+      on:
+        tags: true
+      email: npm@nerdwallet.com
+      api_key:
+        secure: JVuSXxqx4BzQpcKur6qHOu+yMB69M2nBFhPQfeXSHhbG5kni8pw5A1t0QXirX8hs/2y0vAcpSa7wKdoOoR2y5B58rFo3UnaxsFclvpoNIYu3twMTiRl1GZrCziawRTsYp+SnPuXZzbUV62Gd/g0S4IOMLldZKiPncoAMJiX53bcIJRoJOh10cGCfrsqka3m7NyxrrKk+87fn9swqkTK5oKO9kvdaGb5U/pxeNV+ai4kZuV3q41CTHkkbCq4JZ6zoWQTRqvsFhPAZ4GaO33dDK7XmSmaV4oMpDkb9A0DagO6KUW2wai+/k9GkuXfriE3u1FW3sNjDGzXD6n6257gJY33HzKBuZmDLZTEV6IPy6/VVgt28/ACSSoL+hfRWATgzXMb2dzs2ol/1v6ZOiqV0WVfzJwqR3Q+m55jE8s5f9yCaEmfn9IdF84TrseYnbzpTAX4YG2Cb2t+wQVqhfipcQiEAwZvE1SAqtsWRT0+Wvsww3j6sTqZL5L2F8Jlo4mM+vAlNGbhNWF2PHeA0ftpCZnYy1vTINrh3FhJx2+l1Y/OIQLu4tO4aBJhzJcVcCDPTdHnMKTlafKHRmEiRaXPoW8lbHMXoj50OCyK7Zeg0+iGX/ONpWQsywtF+V9osJxRRP6jHaWuAemGrGpSeWN0gTykf2texu+P3jHaloDmF6DU=

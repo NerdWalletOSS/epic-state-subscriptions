@@ -2,7 +2,7 @@
 
 Epicly perform actions and side effects when `*.the.paths.you.care.about` change in the Redux store.
 
-If you have not used Redux-Observable Epics before, [here's a link](https://redux-observable.js.org/docs/basics/Epics.html) to the documentation.
+If you have not used Redux-Observable epics before, [here's a link](https://redux-observable.js.org/docs/basics/Epics.html) to the documentation.
 
 ## Installation
 
@@ -17,7 +17,8 @@ npm i @nerdwallet/epic-state-subscriptions
 Import the `createStateSubscription` operator and add it to your Epic like any other operator. Pass it the paths that you want to subscribe to in the Redux store and it will transform the action stream into a stream of path changes.
 
 ```
-import { createStateSubscription } from 'epic-state-subscriptions';
+import { map } from 'rxjs/operators';
+import { createStateSubscription } from '@nerdwallet/epic-state-subscriptions';
 
 const exampleEpic = (action$, state$) =>
   action$.pipe(
@@ -58,10 +59,11 @@ In the above example, if path `a.b.c` had changed from `false` to `true` the pat
 
 ## Advanced Subscriptions
 
-As a standard RxJS operator, your Epic can chain `createStateSubscription` to support additional use cases like buffering path changes:
+As a standard RxJS operator, your epic can chain `createStateSubscription` to support additional use cases like buffering path changes:
 
 ```
-import { createStateSubscription } from 'epic-state-subscriptions';
+import { bufferTime, filter, map } from 'rxjs/operators';
+import { createStateSubscription } from '@nerdwallet/epic-state-subscriptions';
 
 const exampleEpic (action$, state$) =>
   action$.pipe(
@@ -89,7 +91,7 @@ If a config will need dynamic state subscription paths as the application runs, 
 Include the state subscriptions reducer in your `combineReducers` redux configuration:
 
 ```
-import { stateSubscriptionReducer } from 'epic-state-subscriptions';
+import { stateSubscriptionReducer } from '@nerdwallet/epic-state-subscriptions';
 import { combineReducers } from 'redux';
 
 const rootReducer = combineReducers([...reducers, stateSubscriptionReducer]);
@@ -98,7 +100,7 @@ const rootReducer = combineReducers([...reducers, stateSubscriptionReducer]);
 and then you can dispatch the `overrideStateSubscriptionPaths` action:
 
 ```
-import { overrideStateSubscriptionPaths } from 'epic-state-subscriptions';
+import { overrideStateSubscriptionPaths } from '@nerdwallet/epic-state-subscriptions';
 
 dispatch(overrideStateSubscriptionPaths({ key: 'exampleKey', paths: ['state.x.y'] });
 ```

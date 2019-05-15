@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/%40nerdwallet%2Fepic-state-subscriptions.svg)](https://badge.fury.io/js/%40nerdwallet%2Fepic-state-subscriptions)
+
 # Epic State Subscriptions
 
 Epicly perform actions and side effects when `*.the.paths.you.care.about` change in the Redux store.
